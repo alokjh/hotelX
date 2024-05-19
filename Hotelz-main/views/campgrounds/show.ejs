@@ -1,0 +1,58 @@
+<% layout('layouts/boilerplate')%>
+<div class="row">
+<div class="col-6 mb-3">
+    <div class="card">
+        <img src="<%=camp.image%>" class="card-img-top" alt="img">
+        <div class="card-body">
+          <h5 class="card-title"><%=camp.title%></h5>
+          <p class="card-text"><%=camp.description%></p>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item text-muted"><%=camp.location%></li>
+          <li class="list-group-item">Submitted by <%=camp.author.username%></li>
+          <li class="list-group-item">Rs. <%=camp.price%>/Night</li>
+        </ul>
+        <%if(currentuser&&camp.author.equals(currentuser._id)){%>
+        <div class="card-body">
+          <a href="/campgrounds/<%=camp._id%>/edit" class="card-link btn btn-info">Edit</a>
+            <form class="d-inline" action="/campgrounds/<%=camp._id%>?_method=DELETE" method="post">
+                <button class="btn btn-danger">Delete</button>
+            </form>
+        </div>
+        <%}%>
+      </div>
+</div>
+<div class="col-6 mb-3">
+  <%if(currentuser){%>
+  <h2>Leave a Review</h2>
+  <form action="/campgrounds/<%=camp._id%>/reviews" class="mb-3 validate-form" method="post" novalidate>
+    <div class="mb-3">
+      <label for="rating" class="form-label">Rating</label>
+      <input type="range" class="form-range" min="1" max="5" name="review[rating]" id="rating">
+    </div>
+    <div class="mb-3">
+      <label for="body" class="form-label">Reviews</label>
+      <textarea name="review[body]" id="body" cols="30" rows="3" class="form-control" required></textarea>
+      <div class="valid-feedback">
+        Looks good!
+    </div>
+    </div>
+    <button class="btn btn-success">Submit</button>
+  </form>
+  <%}%>
+  <% for(let review of camp.reviews) { %>
+     <div class="card mb-3">
+      <div class="card-body">
+         <h5 class="card-title">Rating: <%=review.rating%></h5>
+         <h6 class="card-subtitle mb-2,text-muted">By <%=review.author.username%></h6>
+         <p class="card-text">Review: <%=review.body%></p>
+         <%if(currentuser&&review.author.equals(currentuser._id)){%>
+         <form action="/campgrounds/<%=camp._id%>/reviews/<%=review._id%>?_method=DELETE" method="post">
+          <button class="btn btn-sm btn-danger">Delete</button>
+         </form>
+         <%}%>
+      </div>
+     </div>
+  <%}%>
+</div>
+</div>
